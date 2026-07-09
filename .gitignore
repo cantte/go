@@ -1,0 +1,54 @@
+.vercel
+
+./**/.env*
+.env*
+!.env.example
+rm
+
+.turbo
+node_modules
+dist
+.next
+
+.tinyb
+
+# contentlayer
+.contentlayer
+
+.DS_Store
+.vscode
+.dev.vars
+.wrangler
+.vitest
+.react-email
+.kiro
+.idea
+
+.secrets.json
+certs/
+dev/data/*
+dev/config/depot.json
+metald.db
+bin/
+
+
+go.work
+go.work.sum
+
+/cetus
+/inject
+# Added by goreleaser init:
+dist/
+
+.talos
+
+bazel-bin
+bazel-out
+bazel-testlogs
+# Catch-all for any bazel-* worktree symlinks (e.g. bazel-audit-logs-ch-poc
+# when working in a git worktree under a non-default name).
+bazel-*
+
+.claude/worktrees/
+
+*.exe
