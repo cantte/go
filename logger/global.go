@@ -36,7 +36,7 @@ func init() {
 // stdlib logfmt TextHandler otherwise (production, CI, redirected output).
 // Setting NO_COLOR (https://no-color.org) forces logfmt even on a TTY.
 //
-// Minimum level comes from CETUS_LOG_LEVEL (debug | info | warn | error),
+// Minimum level comes from LOG_LEVEL (debug | info | warn | error),
 // defaulting to info. slog.Default()'s handler silently ignores Debug
 // regardless of env, so we configure the level on our handler and route
 // slog.Default() through it too; that way plain `slog.Debug(...)` calls
@@ -62,12 +62,12 @@ func rebuild() {
 	slog.SetDefault(logger)
 }
 
-// levelFromEnv parses CETUS_LOG_LEVEL (case-insensitive: debug | info |
+// levelFromEnv parses LOG_LEVEL (case-insensitive: debug | info |
 // warn | error). Anything unrecognized falls back to info, matching
 // slog's stdlib default. Having this as an env var means flipping Debug
 // on in prod is a DaemonSet patch, not a rebuild.
 func levelFromEnv() slog.Level {
-	raw := strings.TrimSpace(strings.ToLower(os.Getenv("CETUS_LOG_LEVEL")))
+	raw := strings.TrimSpace(strings.ToLower(os.Getenv("LOG_LEVEL")))
 	switch raw {
 	case "debug":
 		return slog.LevelDebug
