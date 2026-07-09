@@ -2,6 +2,7 @@ package logger
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log/slog"
 	"runtime"
@@ -53,10 +54,12 @@ func (h *prettyHandler) Enabled(_ context.Context, l slog.Level) bool {
 func (h *prettyHandler) Handle(_ context.Context, r slog.Record) error {
 	b := &strings.Builder{}
 	if !r.Time.IsZero() {
-		b.WriteString(ansiDim + r.Time.Format("15:04:05.000") + ansiReset + " ")
+		fmt.Fprintf(b, "%s%s%s ", ansiDim, r.Time.Format("15:04:05.000"), ansiReset)
 	}
+
 	b.WriteString(levelTag(r.Level))
-	b.WriteString(" " + r.Message)
+	b.WriteString(" ")
+	b.WriteString(r.Message)
 	b.WriteString(h.prefix)
 
 	groupPrefix := ""
@@ -72,7 +75,7 @@ func (h *prettyHandler) Handle(_ context.Context, r slog.Record) error {
 		frames := runtime.CallersFrames([]uintptr{r.PC})
 		frame, _ := frames.Next()
 		if frame.File != "" {
-			b.WriteString(" " + ansiDim + frame.File + ":" + strconv.Itoa(frame.Line) + ansiReset)
+			fmt.Fprintf(b, " %s%s:%s%s", ansiDim, frame.File, strconv.Itoa(frame.Line), ansiReset)
 		}
 	}
 	b.WriteByte('\n')
@@ -152,7 +155,7 @@ func appendAttr(b *strings.Builder, groupPrefix string, a slog.Attr) {
 		}
 		return
 	}
-	b.WriteString(" " + ansiDim + groupPrefix + a.Key + "=" + ansiReset + formatValue(a.Value))
+	fmt.Fprintf(b, " %s%s%s=%s%s", ansiDim, groupPrefix, a.Key, ansiReset, formatValue(a.Value))
 }
 
 // formatValue quotes values that would be ambiguous in key=value output
