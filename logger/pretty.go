@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"unicode"
 )
 
 // ANSI SGR sequences for the pretty handler. Kept package-local so logger
@@ -158,11 +159,11 @@ func appendAttr(b *strings.Builder, groupPrefix string, a slog.Attr) {
 	fmt.Fprintf(b, " %s%s%s=%s%s", ansiDim, groupPrefix, a.Key, ansiReset, formatValue(a.Value))
 }
 
-// formatValue quotes values that would be ambiguous in key=value output
-// (whitespace, quotes, equals signs) and passes everything else through.
+// formatValue quotes values that would be ambiguous or unsafe in key=value
+// output and passes everything else through.
 func formatValue(v slog.Value) string {
 	s := v.String()
-	if strings.ContainsAny(s, " \t\n\"=") {
+	if strings.ContainsAny(s, " \"=") || strings.IndexFunc(s, unicode.IsControl) >= 0 {
 		return strconv.Quote(s)
 	}
 	if s == "" {
