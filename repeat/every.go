@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cantte/go/clock"
+	prometheusmetrics "github.com/cantte/go/prometheus/metrics"
 )
 
 // Every runs fn in a goroutine every d duration until the returned stop
@@ -46,7 +47,7 @@ func EveryClock(c clock.Clock, d time.Duration, fn func(), jitter ...float64) fu
 	fnWithRecovery := func() {
 		defer func() {
 			if r := recover(); r != nil {
-				//metrics.PanicsTotal.WithLabelValues("repeat.Every", "background").Inc()
+				prometheusmetrics.Configured().RecordPanic("repeat.Every", "background")
 			}
 		}()
 		fn()

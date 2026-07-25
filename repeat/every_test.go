@@ -8,9 +8,16 @@ import (
 	"time"
 
 	"github.com/cantte/go/clock"
+	prometheusmetrics "github.com/cantte/go/prometheus/metrics"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func init() {
+	if err := prometheusmetrics.Configure("repeat_test"); err != nil {
+		panic(err)
+	}
+}
 
 func TestEveryClock_FiresOnSimulatedTime(t *testing.T) {
 	clk := clock.NewTestClock(time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC))
